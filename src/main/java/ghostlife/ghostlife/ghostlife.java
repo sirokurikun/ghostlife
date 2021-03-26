@@ -1,7 +1,6 @@
 package ghostlife.ghostlife;
 
 import org.bukkit.*;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,8 +8,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,24 +32,24 @@ public final class ghostlife extends JavaPlugin implements Listener {
         saveDefaultConfig();
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-
     @SuppressWarnings({"deprecation"})
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
         Player p = (Player) sender;
-        if (cmd.getName().equalsIgnoreCase("ghostlifereload")) {
-            if (!sender.hasPermission("set.op")) {
-                sender.sendMessage("コマンドを実行出来る権限がありません。");
+        if (cmd.getName().equalsIgnoreCase("ghostlife")) {
+            if (args.length <= 0) {
+                return false;
+            }
+            if (args[0].equalsIgnoreCase("reload")) {
+                //OP以外起動しないように設定
+                if (sender.hasPermission("set.op")) {
+                    ghostlife.getInstance().reloadConfig();
+                    p.sendMessage("configリロードしました");
+                } else {
+                    sender.sendMessage("権限者のみ使えます");
+                }
                 return true;
             }
-            reloadConfig();
-            getLogger().info("configリロードしました");
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[server] &eghostlifePL configリロードしました"));
-            return true;
         }
 
         if(cmd.getName().equalsIgnoreCase("playerskullgive")){
@@ -62,6 +63,28 @@ public final class ghostlife extends JavaPlugin implements Listener {
             skull.setOwner(p.getName());
             item.setItemMeta(skull);
             p.getInventory().addItem(item);
+        }
+
+        if(cmd.getName().equalsIgnoreCase("update")){
+            if (args.length <= 0) {
+                return false;
+            }
+            if (args[0].equalsIgnoreCase("open")) {
+                if (!sender.hasPermission("set.op")) {
+                    sender.sendMessage("コマンドを実行出来る権限がありません。");
+                    return true;
+                }
+                ItemStack itemStack = new ItemStack(Material.WRITTEN_BOOK);
+                BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
+                List<String> Page = getConfig().getStringList("Update.List");
+                for (String P : Page) {
+                    bookMeta.addPage(P);
+                }
+                bookMeta.setTitle("Blank");
+                bookMeta.setAuthor("Blank");
+                itemStack.setItemMeta(bookMeta);
+                p.openBook(itemStack);
+            }
         }
 
         if (cmd.getName().equalsIgnoreCase("adddamege")) {
@@ -123,23 +146,6 @@ public final class ghostlife extends JavaPlugin implements Listener {
             }
         }
 
-        if (cmd.getName().equalsIgnoreCase("getcustommodel") || cmd.getName().equalsIgnoreCase("gcm")) {
-            if (!sender.hasPermission("set.op")) {
-                sender.sendMessage("コマンドを実行出来る権限がありません。");
-                return true;
-            }
-            try{
-                ItemStack item = p.getInventory().getItemInMainHand();
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                int custommodel = meta.getCustomModelData();
-                p.sendMessage("カスタムモデルデータ値は" + custommodel + "です");
-                return true;
-            } catch(NullPointerException | NumberFormatException e) {
-                return true;
-            }
-        }
-
         if (cmd.getName().equalsIgnoreCase("sellmmgui") || cmd.getName().equalsIgnoreCase("smg")) {
             Inventory mirror = Bukkit.createInventory(null,9,"§cSELLMMITEM MENU");
             ItemStack menu1 = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
@@ -176,10 +182,30 @@ public final class ghostlife extends JavaPlugin implements Listener {
             mirror.setItem(5,menu3);
             mirror.setItem(3,menu4);
             Location loc = p.getLocation();
-            p.playSound(loc,Sound.BLOCK_CHEST_OPEN, 2, 1);
+            p.playSound(loc, Sound.BLOCK_CHEST_OPEN, 2, 1);
             p.openInventory(mirror);
         }
         return true;
+    }
+
+    @Override
+    public void onDisable() {
+        // Plugin shutdown logic
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        Player player = e.getPlayer();
+        ItemStack itemStack = new ItemStack(Material.WRITTEN_BOOK);
+        BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
+        List<String> Page = getConfig().getStringList("Update.List");
+        for (String s : Page) {
+            bookMeta.addPage(s);
+        }
+        bookMeta.setTitle("Blank");
+        bookMeta.setAuthor("Blank");
+        itemStack.setItemMeta(bookMeta);
+        player.openBook(itemStack);
     }
 
     @EventHandler
@@ -252,6 +278,8 @@ public final class ghostlife extends JavaPlugin implements Listener {
             if (e.getBlock().getType() == Material.OAK_LEAVES) {
                 if (num <= 2) {
                     if ((Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta())).getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&cトマト採取剣"))) {
+                        int emptySlot = player.getInventory().firstEmpty();
+                        if (emptySlot == -1) return;
                         Location loc = player.getLocation();
                         player.playSound(loc,Sound.BLOCK_BELL_USE, 2, 1);
                         getServer().dispatchCommand(getServer().getConsoleSender(), "mm i give " + player.getName() + " tomato 2");
