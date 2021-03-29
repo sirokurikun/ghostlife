@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
@@ -51,33 +50,6 @@ public class command implements CommandExecutor {
             skull.setOwner(p.getName());
             item.setItemMeta(skull);
             p.getInventory().addItem(item);
-        }
-
-        if(cmd.getName().equalsIgnoreCase("update")){
-            if (args.length <= 0) {
-                return false;
-            }
-            if (args[0].equalsIgnoreCase("open")) {
-                if (!sender.hasPermission("set.op")) {
-                    sender.sendMessage("コマンドを実行出来る権限がありません。");
-                    return true;
-                }
-                ItemStack itemStack = new ItemStack(Material.WRITTEN_BOOK);
-                BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
-                List<String> Page = plugin.getConfig().getStringList("Update.List");
-                for (String P : Page) {
-                    bookMeta.addPage(P);
-                }
-                bookMeta.setTitle("Blank");
-                bookMeta.setAuthor("Blank");
-                itemStack.setItemMeta(bookMeta);
-                p.openBook(itemStack);
-            }
-            if(args[0].equalsIgnoreCase("off")){
-                String name = p.getName();
-                int i = 1;
-                this.plugin.getConfig().set(name,i);
-            }
         }
 
         if (cmd.getName().equalsIgnoreCase("adddamege")) {

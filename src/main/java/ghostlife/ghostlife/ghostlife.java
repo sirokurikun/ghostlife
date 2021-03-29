@@ -18,10 +18,8 @@ public final class ghostlife extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new BookOpen(this), this);
         getCommand("ghostlife").setExecutor(new command(this));
         getCommand("playerskullgive").setExecutor(new command(this));
-        getCommand("update").setExecutor(new command(this));
         getCommand("adddamege").setExecutor(new command(this));
         getCommand("addcustommodel").setExecutor(new command(this));
         getCommand("acm").setExecutor(new command(this));
