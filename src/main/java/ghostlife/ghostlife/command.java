@@ -39,7 +39,7 @@ public class command implements CommandExecutor {
             }
         }
 
-        if(cmd.getName().equalsIgnoreCase("playerskullgive")){
+        if (cmd.getName().equalsIgnoreCase("playerskullgive")) {
             if (!sender.hasPermission("set.op")) {
                 sender.sendMessage("コマンドを実行出来る権限がありません。");
                 return true;
@@ -96,7 +96,7 @@ public class command implements CommandExecutor {
                 sender.sendMessage("コマンドを正しく入力してください");
                 return false;
             }
-            try{
+            try {
                 ItemStack item = p.getInventory().getItemInMainHand();
                 ItemMeta meta = item.getItemMeta();
                 String target = args[0];
@@ -106,13 +106,13 @@ public class command implements CommandExecutor {
                 item.setItemMeta(meta);
                 p.sendMessage("カスタムモデルデータ値を" + id + "に設定しました");
                 return true;
-            } catch(NullPointerException | NumberFormatException e) {
+            } catch (NullPointerException | NumberFormatException e) {
                 return true;
             }
         }
 
         if (cmd.getName().equalsIgnoreCase("sellmmgui") || cmd.getName().equalsIgnoreCase("smg")) {
-            Inventory mirror = Bukkit.createInventory(null,9,"§cSELLMMITEM MENU");
+            Inventory mirror = Bukkit.createInventory(null, 9, "§cSELLMMITEM MENU");
             ItemStack menu1 = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
             ItemStack menu2 = new ItemStack(Material.RED_STAINED_GLASS_PANE);
             ItemStack menu3 = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
@@ -121,31 +121,32 @@ public class command implements CommandExecutor {
             ItemMeta itemMeta2 = menu2.getItemMeta();
             ItemMeta itemMeta3 = menu3.getItemMeta();
             ItemMeta itemMeta4 = menu4.getItemMeta();
-            itemMeta1.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&aSHOPを開く"));
-            itemMeta2.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&cSHOPを閉じる"));
-            itemMeta3.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&eSHOP注意点"));
-            itemMeta4.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&8売却可能アイテム一覧をみる"));
+            itemMeta1.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aSHOPを開く"));
+            itemMeta2.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&cSHOPを閉じる"));
+            itemMeta3.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSHOP注意点"));
+            itemMeta4.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&8売却可能アイテム一覧をみる"));
             List<String> lore3 = new ArrayList<String>();
-            lore3.add(ChatColor.translateAlternateColorCodes('&',"&dSHOPのインベントリに"));
-            lore3.add(ChatColor.translateAlternateColorCodes('&',"&d指定アイテム以外を入れてしまうと"));
-            lore3.add(ChatColor.translateAlternateColorCodes('&',"&d一円にもならずアイテムが消えます"));
-            lore3.add(ChatColor.translateAlternateColorCodes('&',"&d消えたアイテムに関しては&c補填対象外&dです"));
+            lore3.add(ChatColor.translateAlternateColorCodes('&', "&dSHOPのインベントリに"));
+            lore3.add(ChatColor.translateAlternateColorCodes('&', "&d指定アイテム以外を入れてしまうと"));
+            lore3.add(ChatColor.translateAlternateColorCodes('&', "&d一円にもならずアイテムが消えます"));
+            lore3.add(ChatColor.translateAlternateColorCodes('&', "&d消えたアイテムに関しては&c補填対象外&dです"));
             itemMeta3.setLore(lore3);
             List<String> lore4 = new ArrayList<String>();
-            lore4.add(ChatColor.translateAlternateColorCodes('&',"&d売却可能アイテムは"));
-            lore4.add(ChatColor.translateAlternateColorCodes('&',"&3一万円&f,&3五千円&f"));
-            lore4.add(ChatColor.translateAlternateColorCodes('&',"&3二千円&f,&3千円&f,&6&l硬貨"));
-            lore4.add(ChatColor.translateAlternateColorCodes('&',"&7洞窟の欠片&f,&0&l黒曜石"));
-            lore4.add(ChatColor.translateAlternateColorCodes('&',"&f圧縮小麦チケット,圧縮ポテトチケット,圧縮人参チケット"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&d売却可能アイテムは"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&3一万円&f,&3五千円&f"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&3二千円&f,&3千円&f,&6&l硬貨"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&7洞窟の欠片&f,&0&l黒曜石"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&f圧縮小麦チケット,圧縮ポテトチケット,圧縮人参チケット"));
+            lore4.add(ChatColor.translateAlternateColorCodes('&', "&f圧縮松の木チケット"));
             itemMeta4.setLore(lore4);
             menu1.setItemMeta(itemMeta1);
             menu2.setItemMeta(itemMeta2);
             menu3.setItemMeta(itemMeta3);
             menu4.setItemMeta(itemMeta4);
-            mirror.setItem(0,menu1);
-            mirror.setItem(8,menu2);
-            mirror.setItem(5,menu3);
-            mirror.setItem(3,menu4);
+            mirror.setItem(0, menu1);
+            mirror.setItem(8, menu2);
+            mirror.setItem(5, menu3);
+            mirror.setItem(3, menu4);
             Location loc = p.getLocation();
             p.playSound(loc, Sound.BLOCK_CHEST_OPEN, 2, 1);
             p.openInventory(mirror);
