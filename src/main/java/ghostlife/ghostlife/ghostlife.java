@@ -25,6 +25,7 @@ public final class ghostlife extends JavaPlugin implements Listener {
         getCommand("acm").setExecutor(new command(this));
         getCommand("sellmmgui").setExecutor(new command(this));
         getCommand("smg").setExecutor(new command(this));
+        getCommand("clocktimer").setExecutor(new command(this));
         saveDefaultConfig();
     }
 
@@ -72,6 +73,7 @@ public final class ghostlife extends JavaPlugin implements Listener {
             double totalMoney = 0;
             for (String key : getConfig().getConfigurationSection("mmitem").getKeys(false)) {
                 int moneyamount = getConfig().getInt("mmitem." + key + ".sellprice");
+                String ItemDisplayName = getConfig().getString("mmitem." + key + ".itemdisplay");
                 for (int i = 0; i < 36; i++) {
                     ItemStack content = contents[i];
                     if (content == null) {
@@ -79,13 +81,13 @@ public final class ghostlife extends JavaPlugin implements Listener {
                     }
                     int amount = content.getAmount();
                     int money = amount * moneyamount;
-                    String ItemDisplayName = getConfig().getString("mmitem." + key + ".itemdisplay");
                     if (content.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "" + ItemDisplayName))) {
                         totalMoney += money;
                         itemDisplayNameList.add(ItemDisplayName);
                     }
                 }
             }
+
             Location loc = player.getLocation();
             player.playSound(loc,Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
             e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', itemDisplayNameList + "&fを売却し" + totalMoney + "&f円獲得しました"));
