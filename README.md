@@ -1,3 +1,3 @@
 # ghostlife
 
-LIFE専用plugin
+アジ鯖 Life serverで使用中のplugin
